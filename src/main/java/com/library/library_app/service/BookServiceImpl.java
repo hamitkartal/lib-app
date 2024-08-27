@@ -1,5 +1,6 @@
 package com.library.library_app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import com.library.library_app.dto.ReqBodies.BookControllerReqBodies.BookIdDTO;
 import com.library.library_app.dto.ReqBodies.BookControllerReqBodies.BookNameDTO;
+import com.library.library_app.dto.FailedBookCreation;
 import com.library.library_app.dto.ServiceResponse;
 import com.library.library_app.model.Book;
 import com.library.library_app.repository.BookRepository;
@@ -75,14 +77,21 @@ public class BookServiceImpl implements BookService {
     public ServiceResponse createBulk(MultipartFile file) throws IOException {
         Iterable<CSVRecord> bookCsvRecords = CsvUtils.getCsvRecordsFromMultipartFile(file);
         List<Book> bookList = CsvRecord2Book.getBookListFromCsvRecords(bookCsvRecords);
-        try {
-            for (Book book: bookList) {
-                this.createBook(book);
+        List<FailedBookCreation> failedBookCreationList = new ArrayList<>();
+        for (Book book : bookList) {
+            try {
+                bookRepository.save(book);
             }
-            return new ServiceResponse(HttpStatus.CREATED, "Books are successfully created", null);
+            catch (Exception e) {
+                failedBookCreationList.add(new FailedBookCreation(book.getName(), book.getAuthor(), e.getMessage()));
+            }
         }
-        catch (Exception e) {
-            return new ServiceResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating book.", null);
+        if (failedBookCreationList.isEmpty()) {
+            return new ServiceResponse(HttpStatus.OK, "Book successfully created", null);
         }
+        else if (failedBookCreationList.size() == bookList.size()) {
+            return new ServiceResponse(HttpStatus.INTERNAL_SERVER_ERROR, "No book could be created", failedBookCreationList);
+        }
+        return new ServiceResponse(HttpStatus.PARTIAL_CONTENT, "Some books could not be created.", failedBookCreationList);
     }
 }
