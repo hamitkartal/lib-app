@@ -1,4 +1,6 @@
 Notes for future
+
+26.08.2024:
 1) Sequences (for IDs) are not working correctly.
 2) CsvUtils::getCsvRecordsFromMultipartFile() function 
 can be considered pretty hardcoded, it assumes:
@@ -13,3 +15,7 @@ BookServiceImpl::createBook() function to create each book. However, there is a 
    * Whenever a book candidate is failed to be created, rollback all created books previously, and tell client which book caused which problem
    * Add the complete&correct book objects to DB, and warn the client about the problematic ones and the causes
      * Might need to add some DTO for those warnings, maybe store warnings in a List<> until the end of loop. And send HttpStatus.PARTIAL if List<> is not empty.
+
+27.08.2024:
+1) Problem (26.08.2024:1) is fixed. (hibernate.id.sequence.increment_size_mismatch_strategy)
+   * Solution is to add (allocationSize = 1) to all @SequenceGenerator annotations

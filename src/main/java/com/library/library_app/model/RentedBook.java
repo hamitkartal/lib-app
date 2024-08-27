@@ -11,7 +11,7 @@ public class RentedBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rented_books_sequence")
-    @SequenceGenerator(name = "rented_books_sequence", sequenceName = "rented_books_seq")
+    @SequenceGenerator(name = "rented_books_sequence", sequenceName = "rented_books_seq", allocationSize = 1)
     Long id;
 
     @Column(name = "user_id")

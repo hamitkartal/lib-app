@@ -10,7 +10,7 @@ public class ReturnedBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "returned_books_sequence")
-    @SequenceGenerator(name = "returned_books_sequence", sequenceName = "returned_books_seq")
+    @SequenceGenerator(name = "returned_books_sequence", sequenceName = "returned_books_seq", allocationSize = 1)
     Long id;
 
     @Column(name = "user_id")

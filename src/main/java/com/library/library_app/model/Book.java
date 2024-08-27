@@ -9,7 +9,7 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "books_sequence")
-    @SequenceGenerator(name = "books_sequence", sequenceName = "books_seq")
+    @SequenceGenerator(name = "books_sequence", sequenceName = "books_seq", allocationSize = 1)
     Long id;
 
     @Column(name = "name", nullable = false)
