@@ -1,6 +1,5 @@
 package com.library.library_app.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,10 +11,9 @@ import com.library.library_app.dto.ReqBodies.BookControllerReqBodies.BookIdDTO;
 import com.library.library_app.dto.ReqBodies.BookControllerReqBodies.BookNameDTO;
 import com.library.library_app.dto.ServiceResponse;
 import com.library.library_app.model.Book;
-import com.library.library_app.model.builder.BookBuilder;
 import com.library.library_app.repository.BookRepository;
 import com.library.library_app.utils.CsvUtils;
-
+import com.library.library_app.utils.parser.CsvRecord2Book;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -74,22 +72,9 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-//    public ServiceResponse createBulk(MultipartFile file) throws IOException { return null;}
-
     public ServiceResponse createBulk(MultipartFile file) throws IOException {
         Iterable<CSVRecord> bookCsvRecords = CsvUtils.getCsvRecordsFromMultipartFile(file);
-        List<Book> bookList = new ArrayList<>();
-        for (CSVRecord bookCsvRecord : bookCsvRecords) {
-            Book book = new BookBuilder()
-                    .withName(bookCsvRecord.get("name"))
-                    .withAuthor(bookCsvRecord.get("author"))
-                    .withPublisher(bookCsvRecord.get("publisher"))
-                    .withStock(Integer.parseInt(bookCsvRecord.get("stock")))
-                    .withPageCount(Integer.parseInt(bookCsvRecord.get("page_count")))
-                    .build();
-            bookList.add(book);
-        }
-
+        List<Book> bookList = CsvRecord2Book.getBookListFromCsvRecords(bookCsvRecords);
         try {
             for (Book book: bookList) {
                 this.createBook(book);
