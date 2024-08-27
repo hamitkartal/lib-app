@@ -9,11 +9,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import com.library.library_app.config.CsvConfig;
+
 public class CsvUtils {
 
     public static Iterable<CSVRecord> getCsvRecordsFromMultipartFile(MultipartFile file) throws IOException {
         Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-        return CSVFormat.RFC4180.withDelimiter(',').withFirstRecordAsHeader().parse(reader);
+        CSVFormat csvFormat = CSVFormat.RFC4180.withDelimiter(CsvConfig.delimiter);
+
+        if (CsvConfig.hasheader) {
+            return csvFormat.withFirstRecordAsHeader().parse(reader);
+        }
+        return csvFormat.parse(reader);
     }
 
 }

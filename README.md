@@ -19,3 +19,4 @@ BookServiceImpl::createBook() function to create each book. However, there is a 
 27.08.2024:
 1) Problem (26.08.2024:1) is fixed. (hibernate.id.sequence.increment_size_mismatch_strategy)
    * Solution is to add (allocationSize = 1) to all @SequenceGenerator annotations
+2) Refactoring (26.08.2024:2) is done. A brand new (CsvConfig.java) file created to provide abstraction, from now on getCsvRecordsFromMultipartFile() function does not assume previously mentioned claims.
